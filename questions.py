@@ -20,24 +20,37 @@
 import random
 import string
 
-words = [
-    "python",
-    "programa",
-    "variable",
-    "funcion",
-    "bucle",
-    "cadena",
-    "entero",
-    "lista",
-]
+def get_word(k):
+    match k:
+        case 1:
+            w = random.choice(list(categ["Lenguajes de Programación"]))
+        case 2:
+            w = random.choice(list(categ["Estructuras de Datos"]))
+        case 3:
+            w = random.choice(list(categ["Generales de Programación"]))
+    return w
+
+
+categ = {
+    "Lenguajes de Programación": ["python", "c", "java", "javascript", "html"],
+    "Estructuras de Datos": ["variable", "string", "cadena", "lista", "arreglo"],
+    "Generales de Programación": ["programa", "bucle", "archivo", "funcion"],
+}
 
 points = 0
-word = random.choice(words)
 guessed = []
 attempts = 6
 
 print("¡Bienvenido al Ahorcado!")
 print()
+
+print(f'Elija una de las siguientes categorias, ingresando el número correspondiente:\n'
+          f'1.Lenguajes de Programación\n'
+          f'2.Estructuras de Datos\n'
+          f'3.Generales de Programación\n'
+          f''
+          )
+word = get_word(int(input()))
 
 while attempts > 0:
     # Mostrar progreso: letras adivinadas y guiones para las que faltan
