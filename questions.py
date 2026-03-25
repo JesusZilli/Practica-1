@@ -20,14 +20,33 @@
 import random
 import string
 
-def get_word(k):
-    match k:
+def keep_playing(x):
+    while x != "s" and x != "n" and x != "S" and x != "N":
+        x = input(f'S/N: ')
+    if x == "S" or x == "N":
+        x = x.lower()
+    match x:
+        case "s":
+            p = True
+        case "n":
+            p = False
+    return p
+
+
+def get_word(key):
+    match key:
         case 1:
-            w = random.choice(list(categ["Lenguajes de Programación"]))
+            cat = "Lenguajes de Programación"
         case 2:
-            w = random.choice(list(categ["Estructuras de Datos"]))
+            cat = "Estructuras de Datos"
         case 3:
-            w = random.choice(list(categ["Generales de Programación"]))
+            cat = "Generales de Programación"
+
+    if len(categ[cat]) == 0:
+        return "."
+
+    w = random.sample(list(categ[cat]), 1)[0]
+    categ[cat].remove(w)
     return w
 
 
@@ -37,61 +56,76 @@ categ = {
     "Generales de Programación": ["programa", "bucle", "archivo", "funcion"],
 }
 
+play = True
 points = 0
-guessed = []
-attempts = 6
 
 print("¡Bienvenido al Ahorcado!")
 print()
 
-print(f'Elija una de las siguientes categorias, ingresando el número correspondiente:\n'
-          f'1.Lenguajes de Programación\n'
-          f'2.Estructuras de Datos\n'
-          f'3.Generales de Programación\n'
-          f''
-          )
-word = get_word(int(input()))
+while play:
+    guessed = []
+    attempts = 6
+    word = " "
 
-while attempts > 0:
-    # Mostrar progreso: letras adivinadas y guiones para las que faltan
-    progress = ""
-    for letter in word:
-        if letter in guessed:
-            progress += letter + " "
+    print(f'Elija una de las siguientes categorias, ingresando el número correspondiente:\n'
+              f'1.Lenguajes de Programación\n'
+              f'2.Estructuras de Datos\n'
+              f'3.Generales de Programación\n'
+              f''
+              )
+    while word == " ":
+        k = int(input())
+        if 4 > k > 0:
+            word = get_word(k)
+            while word == ".":
+                print(f"No hay más palabras de esa categoría. ")
+                word = get_word(int(input(f'Intente nuevamente: ')))
         else:
-            progress += "_ "
-    print(progress)
-    # Verificar si el jugador ya adivinó la palabra completa
-    if "_" not in progress:
-        points += 6
-        print("¡Ganaste!")
-        break
+            print(f'\nNo existe la categoría, intentelo de nuevo: ')
 
-    print(f"Intentos restantes: {attempts}")
-    print(f"Letras usadas: {', '.join(guessed)}")
+    while attempts > 0:
+        # Mostrar progreso: letras adivinadas y guiones para las que faltan
+        progress = ""
+        for letter in word:
+            if letter in guessed:
+                progress += letter + " "
+            else:
+                progress += "_ "
+        print(progress)
+        # Verificar si el jugador ya adivinó la palabra completa
+        if "_" not in progress:
+            points += 6
+            print("¡Ganaste!")
+            play = keep_playing(input(f'Querés seguir jugando? S/N: '))
+            break
 
-    letter = input("Ingresá una letra: ")
-    if letter.isalpha() and len(letter) == 1:
-        if letter.isupper():
-            letter = letter.lower()
-        if letter in guessed:
-            print("Ya usaste esa letra.")
-        elif letter in word:
-            guessed.append(letter)
-            print("¡Bien! Esa letra está en la palabra.")
+        print(f"Intentos restantes: {attempts}")
+        print(f"Letras usadas: {', '.join(guessed)}")
+
+        letter = input("Ingresá una letra: ")
+        if letter.isalpha() and len(letter) == 1:
+            if letter.isupper():
+                letter = letter.lower()
+            if letter in guessed:
+                print("Ya usaste esa letra.")
+            elif letter in word:
+                guessed.append(letter)
+                print("¡Bien! Esa letra está en la palabra.")
+            else:
+                guessed.append(letter)
+                points += -1
+                attempts -= 1
+                print("Esa letra no está en la palabra.")
         else:
-            guessed.append(letter)
-            points += -1
-            attempts -= 1
-            print("Esa letra no está en la palabra.")
+            print("Entrada no válida.")
+
+        print()
+
     else:
-        print("Entrada no válida.")
+        points = 0
+        print(f"¡Perdiste! La palabra era: {word}")
+        play = keep_playing(input(f'Querés seguir jugando? S/N: '))
 
+if word != ".":
     print()
-
-else:
-    points = 0
-    print(f"¡Perdiste! La palabra era: {word}")
-
-print()
-print(f'Puntaje final: {points}.')
+    print(f'Puntaje final: {points}.')
