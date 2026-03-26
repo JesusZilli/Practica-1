@@ -21,6 +21,9 @@ import random
 import string
 
 def keep_playing(x):
+    """Devuelve boolean según si el usuario ingresa "s"/"S" = True o "n"/"N" = False
+        luego según eso se decide si el programa itera la partida o no.
+    """
     while x != "s" and x != "n" and x != "S" and x != "N":
         x = input(f'S/N: ')
     if x == "S" or x == "N":
@@ -34,6 +37,9 @@ def keep_playing(x):
 
 
 def get_word(key):
+    """Elige una palabra aleatoria según la categoría seleccionada desde el diccionario de listas y luego la elimina.
+        Si no hay más palabras en la categoría, devuelve ".".
+    """
     match key:
         case 1:
             cat = "Lenguajes de Programación"
@@ -74,6 +80,7 @@ while play:
               f''
               )
     while word == " ":
+        # Elegir una palabra según la categoria que ingrese el usuario
         k = int(input())
         if 4 > k > 0:
             word = get_word(k)
@@ -92,7 +99,8 @@ while play:
             else:
                 progress += "_ "
         print(progress)
-        # Verificar si el jugador ya adivinó la palabra completa
+        # Verificar si el usuario ya adivinó la palabra completa, sumar puntos
+        # Verificar si el usuario quiere seguir jugando
         if "_" not in progress:
             points += 6
             print("¡Ganaste!")
@@ -103,6 +111,8 @@ while play:
         print(f"Letras usadas: {', '.join(guessed)}")
 
         letter = input("Ingresá una letra: ")
+        # Chequear si el string ingresado es válido y si está o no dentro de la palabra
+        # Reducir el número de intentos y restar puntos cuando corresponda
         if letter.isalpha() and len(letter) == 1:
             if letter.isupper():
                 letter = letter.lower()
@@ -113,7 +123,7 @@ while play:
                 print("¡Bien! Esa letra está en la palabra.")
             else:
                 guessed.append(letter)
-                points += -1
+                points -= 1
                 attempts -= 1
                 print("Esa letra no está en la palabra.")
         else:
@@ -126,6 +136,5 @@ while play:
         print(f"¡Perdiste! La palabra era: {word}")
         play = keep_playing(input(f'Querés seguir jugando? S/N: '))
 
-if word != ".":
-    print()
-    print(f'Puntaje final: {points}.')
+print()
+print(f'Puntaje final: {points}.')
